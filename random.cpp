@@ -1,27 +1,29 @@
 #include "random.h"
+#include<fstream>
 
-/*******************************************************************************************************************/
+//------------------------------------------------------------------------------------------------------------------
 RandomGenerator::RandomGenerator()
 {
     m_bIsSeedGenerated = false;
+    m_bIsRandomNamesLoaded = false;
 }
 
-/*******************************************************************************************************************/
+//------------------------------------------------------------------------------------------------------------------
 RandomGenerator::~RandomGenerator()
 {
 
 }
 
-/*******************************************************************************************************************/
+//------------------------------------------------------------------------------------------------------------------
 void RandomGenerator::generateSeed()
 {
     srand((unsigned)time(0));
     m_bIsSeedGenerated = true;
 }
 
-/*******************************************************************************************************************/
-/* Generate a random number in between [0, range) */
-/*******************************************************************************************************************/
+//------------------------------------------------------------------------------------------------------------------
+// Generate a random number in between [0, range) */
+//------------------------------------------------------------------------------------------------------------------
 unsigned int RandomGenerator::generateRandomNumber(unsigned int range)
 {
     //unsigned int actualRange = range + 1;
@@ -37,14 +39,14 @@ unsigned int RandomGenerator::generateRandomNumber(unsigned int range)
     }
 }
 
-/*******************************************************************************************************************/
-/* @param len:                 Length of string to generate.
-   @param useUppercase         Generate uppercase characters 
-   @param useNumbers           Generate numbers
-
-   @returns                    Pointer to a string present in heap memory, user has responsibility
-                               to free the memory used by this string.
-********************************************************************************************************************/
+//------------------------------------------------------------------------------------------------------------------
+// @param len:                 Length of string to generate.
+// @param useUppercase         Generate uppercase characters 
+// @param useNumbers           Generate numbers
+//
+// @returns                    Pointer to a string present in heap memory, user has responsibility
+//                             to free the memory used by this string.
+//------------------------------------------------------------------------------------------------------------------
 char *RandomGenerator::generateRandomString(int len, bool useUppercase, bool useNumbers)
 {
     bool firstShouldBeChar = true;
@@ -100,4 +102,121 @@ char *RandomGenerator::generateRandomString(int len, bool useUppercase, bool use
     output[i] = '\0';
 
     return output;
+}
+
+//------------------------------------------------------------------------------------------------------------------
+// @name                    : InitRandomNames
+//
+// @description             : Loads the males and females file containing list of random names.
+//
+// @returns                 : True if both files loaded successfully, else false.
+//------------------------------------------------------------------------------------------------------------------
+bool RandomGenerator::InitRandomNames()
+{
+    // Load male names list
+    fstream fileStream;
+    fileStream.open(MALES_FILE, ios::in);
+    if (!fileStream)
+    {
+        printf("File [ %s ] NOT found!\n", MALES_FILE.c_str());
+        return false;
+    }
+
+    string line;
+    while (getline(fileStream, line))
+    {
+        m_males.push_back(line);
+    }
+
+    printf("Loaded %ld male names\n", m_males.size());
+
+    // Close male file
+    fileStream.close();
+
+
+    // Load female names list
+    fileStream.open(FEMALES_FILE, ios::in);
+    if (!fileStream)
+    {
+        printf("File [ %s ] NOT found!\n", FEMALES_FILE.c_str());
+        return false;
+    }
+
+    while (getline(fileStream, line))
+    {
+        m_females.push_back(line);
+    }
+
+    printf("Loaded %ld female names\n", m_females.size());
+
+    // Close female file
+    fileStream.close();
+
+    m_bIsRandomNamesLoaded = true;
+    printf("Total names in record: %ld\n", m_males.size() + m_females.size());
+    return true;
+}
+
+//------------------------------------------------------------------------------------------------------------------
+// @name                    : GetRandomMaleName
+//
+// @description             : Gets a random male name
+//
+// @returns                 : Random name
+//------------------------------------------------------------------------------------------------------------------
+string RandomGenerator::GetRandomMaleName()
+{
+    if (m_bIsRandomNamesLoaded && m_males.size())
+    {
+        int index = generateRandomNumber(m_males.size());
+        return m_males[index];
+    }
+    else
+    {
+        printf("Names list not loaded! Please use InitRandomNames()\n");
+        return "";
+    }
+}
+
+//------------------------------------------------------------------------------------------------------------------
+// @name                    : GetRandomFemaleName
+//
+// @description             : Gets a random female name
+//
+// @returns                 : Random name
+//------------------------------------------------------------------------------------------------------------------
+string RandomGenerator::GetRandomFemaleName()
+{
+    if (m_bIsRandomNamesLoaded && m_females.size())
+    {
+        int index = generateRandomNumber(m_females.size());
+        return m_females[index];
+    }
+    else
+    {
+        printf("Names list not loaded! Please use InitRandomNames()\n");
+        return "";
+    }
+}
+
+//------------------------------------------------------------------------------------------------------------------
+// @name                    : GetRandomName
+//
+// @description             : Gets a random name
+//
+// @returns                 : Random name
+//------------------------------------------------------------------------------------------------------------------
+string RandomGenerator::GetRandomName()
+{
+    // Randomly choose a male/female
+    int genderRandom = generateRandomNumber(10);
+
+    if (genderRandom < 5)
+    {
+        return GetRandomMaleName();
+    }
+    else
+    {
+        return GetRandomFemaleName();
+    }
 }
