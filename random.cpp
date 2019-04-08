@@ -2,6 +2,12 @@
 #include<fstream>
 
 //------------------------------------------------------------------------------------------------------------------
+// @name                    : RandomGenerator
+//
+// @description             : Constructor
+//
+// @returns                 : Nothing
+//------------------------------------------------------------------------------------------------------------------
 RandomGenerator::RandomGenerator()
 {
     m_bIsSeedGenerated = false;
@@ -9,11 +15,24 @@ RandomGenerator::RandomGenerator()
 }
 
 //------------------------------------------------------------------------------------------------------------------
+// @name                    : RandomGenerator
+//
+// @description             : Destructor
+//
+// @returns                 : Nothing
+//------------------------------------------------------------------------------------------------------------------
 RandomGenerator::~RandomGenerator()
 {
-
+    m_males.clear();
+    m_females.clear();
 }
 
+//------------------------------------------------------------------------------------------------------------------
+// @name                    : generateSeed
+//
+// @description             : Generates a seed which is used by the Random Number Generator.
+//
+// @returns                 : Nothing
 //------------------------------------------------------------------------------------------------------------------
 void RandomGenerator::generateSeed()
 {
@@ -22,7 +41,13 @@ void RandomGenerator::generateSeed()
 }
 
 //------------------------------------------------------------------------------------------------------------------
-// Generate a random number in between [0, range) */
+// @name                    : generateRandomNumber
+//
+// @description             : Generate a random number in between [0, range)
+//
+// @param range             :  Maximum value of number that needs to be generated (not inclusive)
+//
+// @returns                 : Random unsigned integer.
 //------------------------------------------------------------------------------------------------------------------
 unsigned int RandomGenerator::generateRandomNumber(unsigned int range)
 {
@@ -40,12 +65,16 @@ unsigned int RandomGenerator::generateRandomNumber(unsigned int range)
 }
 
 //------------------------------------------------------------------------------------------------------------------
-// @param len:                 Length of string to generate.
-// @param useUppercase         Generate uppercase characters 
-// @param useNumbers           Generate numbers
+// @name                    : generateRandomString
 //
-// @returns                    Pointer to a string present in heap memory, user has responsibility
-//                             to free the memory used by this string.
+// @description             : Generates a random string. String returned has to be freed by the caller.
+//
+// @param len:              :  Length of string to generate.
+// @param useUppercase      :  Generate uppercase characters 
+// @param useNumbers        :  Generate numbers
+//
+// @returns                 : Pointer to a string present in heap memory, user has responsibility
+//                            to free the memory used by this string.
 //------------------------------------------------------------------------------------------------------------------
 char *RandomGenerator::generateRandomString(int len, bool useUppercase, bool useNumbers)
 {
